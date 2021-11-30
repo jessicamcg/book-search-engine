@@ -44,8 +44,18 @@ const resolvers = {
             const savedBook = await Book.create(args);
             return savedBook;
         },
-        removeBook: {
-
+        removeBook: async (parent, { bookId }, context) => {
+            if (context.user) {
+                return Book.findOneAndUpdate(
+                  { _id: bookId },
+                  {
+                    $pull: {
+                      books: { _id: bookId },
+                    },
+                  },
+                  { new: true }
+                );
+            }
         }
     }
 }
